@@ -18,6 +18,7 @@ import com.example.pablo.model.churches.Data;
 import com.example.pablo.model.login.ExampleLogin;
 import com.example.pablo.model.RestaurantsExam;
 import com.example.pablo.model.mosques.MosqueExample;
+import com.example.pablo.model.notification.Notification;
 import com.example.pablo.model.order_details.OrderDetailsExample;
 import com.example.pablo.model.orders.OrdersExample;
 import com.example.pablo.model.payment.Payment;
@@ -35,6 +36,7 @@ import okhttp3.Interceptor;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
@@ -81,19 +83,19 @@ public interface Service {
     Call<List<HotelsData>> getPopularHotels(@Header("Authorization") String token);
 
     @GET("hotels")
-    Call<List<HotelsData>> getHotels(@Header("Authorization") String token );
+    Call<Hotels> getHotels(@Header("Authorization") String token);
 
     //hotels details
     @GET("hotels/{id}")
-    Call<HotelsData> getHotelsDetails(@Path("id") int id, @Header("Authorization") String token);
+    Call<HotelsExample> getHotelsDetails(@Path("id") int id, @Header("Authorization") String token);
 
     //room
     @GET("hotel_rooms")
-    Call<List<HotelRoom>> getRoom(@Header("Authorization") String token);
+    Call<List<com.example.pablo.model.rooms.Data>> getRoom(@Header("Authorization") String token);
 
     //room
     @GET("hotel_rooms/{id}")
-    Call<HotelRoom> getRoomDetails(@Path("id") Long id, @Header("Authorization") String token);
+    Call<RoomsExample> getRoomDetails(@Path("id") Long id, @Header("Authorization") String token);
 
     //booking info
     @FormUrlEncoded
@@ -137,7 +139,8 @@ public interface Service {
 
     //delete item from cart
     @GET("hotelOrders/{id}")
-    Call<OrderDetailsExample> getHotelOrdersDetails(@Path("id") Long itemId, @Header("Authorization") String token);
+    Call<OrderDetailsExample> getHotelOrdersDetails(@Path("id") Long itemId,
+                                                    @Header("Authorization") String token);
 
     //Payment
     @FormUrlEncoded
@@ -150,6 +153,17 @@ public interface Service {
             @Field("cvc") Long cvc,
             @Header("Authorization") String token
              );
+
+
+    @POST("searchHotelByName")
+    Call<HotelsData> search(@Header("Authorization") String token);
+
+
+    @POST("updateAuthAvatar")
+    Call<RegisterResponse> updateUserImage(
+            @Header("Accept") String accept
+            , @Part MultipartBody.Part image
+            , @Header("Authorization") String token);
 
     //**************************************************************************
     //mosque
@@ -186,9 +200,9 @@ public interface Service {
     @GET("Orders/{id}")
     Call<List<RegisterResponse>> getOrders(@Path("userId") int id);
 
-    //get orders restaurant
-    @GET("hotelOrders")
-    Call<List<RestaurantsExam>> getRestaurantOrders();
+    //getNotification
+    @GET("AllAuthNotifications")
+    Call<Notification> getNotification(@Header("Authorization") String token);
 
     //get AmenitiesData
     @GET("hotel_advantages")
@@ -198,17 +212,6 @@ public interface Service {
     @GET("favourite")
     Call<List<RestaurantsExam>> getRestaurantFavourite();
 
-    //Restaurants
-    @GET("Restaurants")
-    Call<List<RestaurantsExam>> getRestaurant();
-
-    //Restaurants
-    @GET("Restaurants")
-    Call<List<RestaurantsExam>> getFreshRecipes();
-
-    //RestaurantDetails
-    @GET("RestaurantDetails/{id}")
-    Call<RestaurantsExam> getRestaurantDetails(@Path("id") int id);
 
 
     class ApiClient {

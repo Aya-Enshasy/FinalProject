@@ -141,7 +141,9 @@ public class CartFragment extends Fragment {
                     stopShimmer();
                     Toast.makeText(getActivity(), response.body().getMessage()+"", Toast.LENGTH_LONG).show();
                     list = response.body().getHotelOrderItems();
+                    noData();
                     adapter.setData(list);
+
                 } else {
 
                     String errorMessage = parseError(response);
@@ -376,6 +378,22 @@ public class CartFragment extends Fragment {
                 swipeToEditAndDelete();
             },1000);
         });
+    }
+
+    private void noData(){
+        if(list.size()==0)
+        {
+            binding.empty.setVisibility(View.VISIBLE);
+            binding.empty.setText("No Reserved Rooms Yet");
+            binding.imageView26.setVisibility(View.VISIBLE);
+            binding.imageView26.setImageResource(R.drawable.undraw_empty_cart_co35);
+            binding.recyclerView2.setVisibility(View.GONE);
+
+        }else{
+            binding.empty.setVisibility(View.GONE);
+            binding.imageView26.setVisibility(View.GONE);
+            binding.recyclerView2.setVisibility(View.VISIBLE);
+        }
     }
 
 }

@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
 
                 boolean isFirsttime = onboarding.getBoolean("firsttime", true);
                 if (getIntent().getExtras() != null && getIntent().getStringExtra("order_id") != null) {
-                    Toast.makeText(MainActivity.this, "ssasasasasa", Toast.LENGTH_SHORT).show();
 
                     if (getIntent().getStringExtra("order_id") != null) {
                         Toast.makeText(MainActivity.this, getIntent().getStringExtra("order_id") + "", Toast.LENGTH_SHORT).show();

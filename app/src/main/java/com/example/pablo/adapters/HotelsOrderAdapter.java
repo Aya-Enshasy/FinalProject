@@ -11,18 +11,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.pablo.R;
 import com.example.pablo.details_activities.HotelOrdersDetails;
 import com.example.pablo.databinding.HotelOrderBinding;
+import com.example.pablo.model.order_details.HotelOrderItem;
 import com.example.pablo.model.orders.Datum;
+import com.example.pablo.model.orders.OrdersExample;
 
+import java.util.HashSet;
 import java.util.List;
 
 
 
 public class HotelsOrderAdapter  extends RecyclerView.Adapter<HotelsOrderAdapter.ViewHolder> {
-
     public List<Datum> list  ;
     Context context;
     public static String ORDERDETAILS = "order_id";
-
+;
 
     public HotelsOrderAdapter(Context context ){
         this.context= context;
@@ -40,10 +42,10 @@ public class HotelsOrderAdapter  extends RecyclerView.Adapter<HotelsOrderAdapter
     @Override
     public void onBindViewHolder(HotelsOrderAdapter.ViewHolder holder, int position) {
 
-        holder.binding.date.setText(list.get(position).getCreatedAt()+"");
+        holder.binding.date.setText(list.get(position).getTimeCount()+"");
         holder.binding.price.setText(list.get(position).getTotalPrice()+"");
         holder.binding.count.setText(list.get(position).getOrderItemsCount()+"");
-      //  holder.binding.hotelName.setText(list.get(position).getHotelName()+"");
+        holder.binding.hotelName.setText(list.get(position).getHotelName());
 
 
 
@@ -53,7 +55,7 @@ public class HotelsOrderAdapter  extends RecyclerView.Adapter<HotelsOrderAdapter
             public void onClick(View view) {
 
                 Intent intent = new Intent(context, HotelOrdersDetails.class);
-                intent.putExtra(ORDERDETAILS, list.get(position).getId());
+                intent.putExtra("order_id", list.get(position).getId());
                 context.startActivity(intent);
 
 
@@ -63,6 +65,8 @@ public class HotelsOrderAdapter  extends RecyclerView.Adapter<HotelsOrderAdapter
 
 
     }
+
+
 
     @Override
     public int getItemCount() {

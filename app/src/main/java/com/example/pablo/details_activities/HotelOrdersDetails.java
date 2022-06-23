@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -94,8 +95,10 @@ public class HotelOrdersDetails extends AppCompatActivity {
                 if (response.isSuccessful()) {
                  Toast.makeText(getApplicationContext(), response.body().getMessage()+"", Toast.LENGTH_LONG).show();
 
-                    binding.totalPrice.setText(response.body().getData().getTotalPrice()+"$");
-                    binding.date.setText(response.body().getData().getCreatedAt()+"");
+
+                   binding.totalPrice.setText(response.body().getData().getTotalPrice()+"$");
+                   ////////////
+                    binding.date.setText(response.body().getData().getTimeCount()+"");
                     binding.count.setText(response.body().getData().getOrderItemsCount()+"");
                     binding.hotelName.setText(response.body().getData().getHotelName()+"");
 
@@ -104,6 +107,7 @@ public class HotelOrdersDetails extends AppCompatActivity {
                     Log.e("response",response.body().getHotelOrderItems()+" if");
                 }
                 else {
+
 
                     String errorMessage = parseError(response);
                     Log.e("errorMessage", errorMessage + "");
@@ -140,11 +144,13 @@ public class HotelOrdersDetails extends AppCompatActivity {
         adapter = new OrderDetailsAdapter(this);
         binding.recyclerview.setAdapter(adapter);
 
+
+
     }
 
     private void getData(){
         if (getIntent() != null) {
-            Order_Id = getIntent().getLongExtra(ORDERDETAILS,0);
+            Order_Id = getIntent().getLongExtra("order_id",0);
         }
     }
 

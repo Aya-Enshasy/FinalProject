@@ -108,6 +108,7 @@ public class Cart extends AppCompatActivity {
                     stopShimmer();
                     Toast.makeText(getApplicationContext(), response.body().getMessage()+"", Toast.LENGTH_LONG).show();
                     list = response.body().getHotelOrderItems();
+                    noData();
                     adapter.setData(list);
                 } else {
 
@@ -329,7 +330,21 @@ public class Cart extends AppCompatActivity {
         binding.shimmerLayout.setVisibility(View.GONE);
     }
 
+    private void noData(){
+        if(list.size()==0)
+        {
+            binding.empty.setVisibility(View.VISIBLE);
+            binding.empty.setText("No Reserved Rooms Yet");
+            binding.imageView26.setVisibility(View.VISIBLE);
+            binding.imageView26.setImageResource(R.drawable.undraw_empty_cart_co35);
+            binding.recyclerView2.setVisibility(View.GONE);
 
+        }else{
+            binding.empty.setVisibility(View.GONE);
+            binding.imageView26.setVisibility(View.GONE);
+            binding.recyclerView2.setVisibility(View.VISIBLE);
+        }
+    }
 
 
 }

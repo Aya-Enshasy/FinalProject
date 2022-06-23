@@ -1,11 +1,14 @@
 package com.example.pablo.fragments;
+
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
@@ -18,23 +21,31 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Toast;
+
 import com.example.pablo.activity.NoInternetConnection;
 import com.example.pablo.R;
 import com.example.pablo.activity.Login;
 import com.example.pablo.adapters.HotelsOrderAdapter;
 import com.example.pablo.databinding.FragmentOrderBinding;
 import com.example.pablo.interfaces.Service;
+import com.example.pablo.model.order_details.HotelOrderItem;
+import com.example.pablo.model.order_details.OrderDetailsExample;
 import com.example.pablo.model.orders.Datum;
 import com.example.pablo.model.orders.OrdersExample;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import static android.content.Context.CONNECTIVITY_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
 import static com.example.pablo.activity.Login.PREF_NAME;
+import static com.example.pablo.activity.Login.USERKey;
 import static com.example.pablo.activity.Login.parseError;
 
 public class OrderFragment extends Fragment {
@@ -83,11 +94,13 @@ public class OrderFragment extends Fragment {
         getOrders();
 
 
+
+
         return view;
     }
 
     private void getOrders() {
-        Login.SP = getActivity().getSharedPreferences(PREF_NAME ,MODE_PRIVATE);
+        Login.SP = getActivity().getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         String token = Login.SP.getString(Login.TokenKey, "");//"No name defined" is the default value.
 
         service.getHotelOrders(token).enqueue(new Callback<OrdersExample>() {
@@ -97,42 +110,40 @@ public class OrderFragment extends Fragment {
                 if (response.isSuccessful()) {
 
                     stopShimmer();
+                    list = response.body().getData();
                     noData();
+                    hotelsOrderAdapter.setData(list);
 
-                    Log.e("response",response.code()+"");
-
-//                    SharedPreferences SP = getActivity().getSharedPreferences(PREF_NAME, MODE_PRIVATE);
-//                    Long userId=SP.getLong(USERKey,0)
-                            list = response.body().getData();
-                            hotelsOrderAdapter.setData(list);
-
-                    }else {
+                } else {
+                    stopShimmer();
                     String errorMessage = parseError(response);
                     Log.e("errorMessage", errorMessage + "");
-                    Toast.makeText(getActivity(), response.body().getMessage()+"", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), response.body().getMessage() + "", Toast.LENGTH_LONG).show();
 
                 }
 
 
             }
+
             @Override
             public void onFailure(Call<OrdersExample> call, Throwable t) {
+                stopShimmer();
 
                 t.printStackTrace();
-                Toast.makeText(getActivity(), ""+t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "" + t.getMessage(), Toast.LENGTH_LONG).show();
 
             }
         });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void registerNetworkCallback(){
+    private void registerNetworkCallback() {
 
 
         try {
 
             connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-            connectivityManager.registerDefaultNetworkCallback(new ConnectivityManager.NetworkCallback(){
+            connectivityManager.registerDefaultNetworkCallback(new ConnectivityManager.NetworkCallback() {
 
                 @Override
                 public void onAvailable(@NonNull Network network) {
@@ -146,9 +157,7 @@ public class OrderFragment extends Fragment {
             });
 
 
-
-
-        }catch (Exception e){
+        } catch (Exception e) {
 
             isConnected = false;
 
@@ -163,20 +172,20 @@ public class OrderFragment extends Fragment {
         registerNetworkCallback();
     }
 
-    public boolean isOnLine(){
+    public boolean isOnLine() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        if(networkInfo==null || !networkInfo.isAvailable() || !networkInfo.isConnected()){
+        if (networkInfo == null || !networkInfo.isAvailable() || !networkInfo.isConnected()) {
             return false;
         }
         return true;
     }
 
-    private void checkInternetConnection(){
-        if (!isOnLine()){
-            if (isConnected){
-                Toast.makeText(getActivity(),"Connected",Toast.LENGTH_SHORT).show();
-            }else{
+    private void checkInternetConnection() {
+        if (!isOnLine()) {
+            if (isConnected) {
+                Toast.makeText(getActivity(), "Connected", Toast.LENGTH_SHORT).show();
+            } else {
 
                 Intent i = new Intent(getActivity(), NoInternetConnection.class);
                 startActivity(i);
@@ -186,8 +195,8 @@ public class OrderFragment extends Fragment {
         }
     }
 
-    private void adapter(){
-        list = new ArrayList<>() ;
+    private void adapter() {
+        list = new ArrayList<>();
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
         binding.recyclerview.setLayoutManager(linearLayoutManager);
@@ -198,45 +207,45 @@ public class OrderFragment extends Fragment {
 
     }
 
-    private void startShimmer(){
+    private void startShimmer() {
         binding.shimmerLayout.startShimmer();
     }
 
-    private void stopShimmer(){
+    private void stopShimmer() {
         binding.shimmerLayout.stopShimmer();
         binding.shimmerLayout.setVisibility(View.GONE);
     }
 
-    private void noData(){
-        if(list.isEmpty())
-        {
+    private void noData() {
+        if (list.size() == 0) {
             binding.empty.setVisibility(View.VISIBLE);
             binding.empty.setText("No Reserved Rooms Yet");
             binding.imageView26.setVisibility(View.VISIBLE);
             binding.imageView26.setImageResource(R.drawable.undraw_empty_cart_co35);
             binding.recyclerview.setVisibility(View.GONE);
-        }else{
+
+        } else {
             binding.empty.setVisibility(View.GONE);
             binding.imageView26.setVisibility(View.GONE);
             binding.recyclerview.setVisibility(View.VISIBLE);
         }
     }
 
-    private void getRetrofitInstance(){
+    private void getRetrofitInstance() {
         service = Service.ApiClient.getRetrofitInstance();
     }
 
-    private void swipeRefresh(){
+    private void swipeRefresh() {
         SwipeRefreshLayout swipeRefreshLayout = binding.scroll;
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            new Handler().postDelayed(()->{
+            new Handler().postDelayed(() -> {
                 swipeRefreshLayout.setRefreshing(false);
                 startShimmer();
                 checkInternetConnection();
                 adapter();
                 getRetrofitInstance();
                 getOrders();
-            },1000);
+            }, 1000);
         });
     }
 

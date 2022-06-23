@@ -44,6 +44,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -109,17 +111,19 @@ public class HotelsFragment extends Fragment {
            new Handler().postDelayed(()->{
                swipeRefreshLayout.setRefreshing(false);
                checkInternetConnection();
-//               startShimmer();
+               startShimmer();
                adapter();
                getRetrofitInstance();
+               getHotel();
                getPopularHotel();
            },1000);
         });
 
         checkInternetConnection();
-       // startShimmer();
+        startShimmer();
         adapter();
         getRetrofitInstance();
+        getHotel();
         getPopularHotel();
         return view;
     }
@@ -131,19 +135,17 @@ public class HotelsFragment extends Fragment {
         String token = Login.SP.getString(Login.TokenKey, "");//"No name defined" is the default value.
 
 
-        service.getHotels(token).enqueue(new Callback<List<HotelsData>>() {
+        service.getHotels(token).enqueue(new Callback<Hotels>() {
             @Override
-            public void onResponse(Call<List<HotelsData>> call, Response<List<HotelsData>> response) {
+            public void onResponse(Call<Hotels> call, Response<Hotels> response) {
 
                 if (response.isSuccessful()) {
-                   list = response.body();
-//                    binding.shimmerLayout1.stopShimmer();
-//                    binding.shimmerLayout1.setVisibility(View.GONE);
+                   list = response.body().getData();
+                    binding.shimmerLayout1.stopShimmer();
+                    binding.shimmerLayout1.setVisibility(View.GONE);
                     binding.recyclerview.startLayoutAnimation();
-//                    Hotels hotels=new Hotels();
-//                    recyclerPagination(hotels,page);
-               //     storeInOrdersTable(hotels.getData());
-                    allHotelsAdapter.setData(list);
+
+                    recyclerPagination(response.body());
 
                 }else {
                     String errorMessage = parseError(response);
@@ -152,19 +154,24 @@ public class HotelsFragment extends Fragment {
                 }
             }
             @Override
-            public void onFailure(Call<List<HotelsData>> call, Throwable t) {
+            public void onFailure(Call<Hotels> call, Throwable t) {
                 t.printStackTrace();
+
+
+
+
                 call.cancel();
             }
         });
     }
 
 
-    private void recyclerPagination(Hotels hotels , int page){
+    private void recyclerPagination(Hotels hotels){
         if (page == 1) {
             allHotelsAdapter.setData(hotels.getData());
         } else
             allHotelsAdapter.addToList(hotels.getData());
+        Log.e("page00",hotels.getData().get(0).getAddress()+"");
         if (hotels.getLastPage()==page){
             isLastPage=true;
             Log.e("lastPage",isLastPage+"");
@@ -174,7 +181,7 @@ public class HotelsFragment extends Fragment {
 
         }
     }
-    ///////////////////////////////////////
+
     private void getPopularHotel() {
 
         Login.SP = getActivity().getSharedPreferences(PREF_NAME ,MODE_PRIVATE);
@@ -189,10 +196,8 @@ public class HotelsFragment extends Fragment {
 
                     list1 = response.body();
                     popularHotelsAdapter.setData(list1);
-
-                    getHotel();
                     Log.e("Success", new Gson().toJson(response.body()));
-//                    stopShimmer();
+                    stopShimmer();
                 }else {
                     String errorMessage = parseError(response);
                     Log.e("errorMessage", errorMessage + "");
@@ -255,14 +260,14 @@ public class HotelsFragment extends Fragment {
         return true;
     }
 
-//    private void startShimmer(){
-//        binding.shimmerLayout.startShimmer();
-//    }
+    private void startShimmer(){
+        binding.shimmerLayout.startShimmer();
+    }
 
-//    private void stopShimmer(){
-//        binding.shimmerLayout.stopShimmer();
-//        binding.shimmerLayout.setVisibility(View.GONE);
-//    }
+    private void stopShimmer(){
+        binding.shimmerLayout.stopShimmer();
+        binding.shimmerLayout.setVisibility(View.GONE);
+    }
 
     private void checkInternetConnection(){
         if (!isOnLine()){
@@ -296,23 +301,23 @@ public class HotelsFragment extends Fragment {
 
 
 
-//        binding.recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//                LinearLayoutManager layoutManager = LinearLayoutManager.class.cast(recyclerView.getLayoutManager());
-//
-//                totalItemCount = layoutManager.getItemCount();
-//                lastVisibleItem = layoutManager.findLastVisibleItemPosition();
-//
-//                Log.e("totalItemCount", totalItemCount + "");
-//                Log.e("lastVisibleItem", lastVisibleItem + "");
-//                if (lastVisibleItem == (totalItemCount - 1) && !isLoading && totalItemCount != 0 && !isLastPage) {
-//                    page++;
-//                    Log.e("listSize", "done");
-//                }
-//            }
-//        });
+        binding.recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                LinearLayoutManager layoutManager = LinearLayoutManager.class.cast(recyclerView.getLayoutManager());
+
+                totalItemCount = layoutManager.getItemCount();
+                lastVisibleItem = layoutManager.findLastVisibleItemPosition();
+
+                Log.e("totalItemCount", totalItemCount + "");
+                Log.e("lastVisibleItem", lastVisibleItem + "");
+                if (lastVisibleItem == (totalItemCount - 1) && !isLoading && totalItemCount != 0 && !isLastPage) {
+                    page++;
+                    Log.e("listSize", "done");
+                }
+            }
+        });
 
 
     }
@@ -320,4 +325,28 @@ public class HotelsFragment extends Fragment {
     private void getRetrofitInstance(){
         service = Service.ApiClient.getRetrofitInstance();
     }
+
+
+    private void search() {
+        Login.SP = getActivity().getSharedPreferences(PREF_NAME ,MODE_PRIVATE);
+        String token = Login.SP.getString(Login.TokenKey, "");//"No name defined" is the default value.
+
+        service.search(token).enqueue(new Callback<HotelsData>() {
+            @Override
+            public void onResponse(Call<HotelsData> call, Response<HotelsData> response) {
+                if (response.isSuccessful()){
+                    Log.d("Success", new Gson().toJson(response.body()));
+                }
+
+
+            }
+
+            @SuppressLint("CheckResult")
+            @Override
+            public void onFailure(Call<HotelsData> call, Throwable t) {
+            }
+        });
+
+    }
+
 }

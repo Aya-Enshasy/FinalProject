@@ -105,11 +105,11 @@ public class BookingInfo extends AppCompatActivity {
         Login.SP = this.getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         String token = Login.SP.getString(Login.TokenKey, "");//"No name defined" is the default value.
 
-        service.getRoomDetails(roomId, token).enqueue(new Callback<HotelRoom>() {
+        service.getRoomDetails(roomId, token).enqueue(new Callback<RoomsExample>() {
             @SuppressLint("SetTextI18n")
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
-            public void onResponse(Call<HotelRoom> call, Response<HotelRoom> response) {
+            public void onResponse(Call<RoomsExample> call, Response<RoomsExample> response) {
                 Log.e("response code", response.code() + "");
 
                 if (response.body() != null) {
@@ -128,19 +128,19 @@ public class BookingInfo extends AppCompatActivity {
 
                     binding.count.setText("1");
 
-                    binding.totalMoney.setText(response.body().getPricePerNight() + "");
+                    binding.totalMoney.setText(response.body().getData().getPricePerNight() + "");
 
                     binding.dayCount.setText("1");
 
-                    binding.hotelName.setText(response.body().getName() + "");
-                    binding.priceHotel.setText(response.body().getPricePerNight() + "");
-                    binding.personNum.setText(response.body().getAvailableRooms() + "");
-                    binding.roomPrice.setText(response.body().getPricePerNight() + "");
+                    binding.hotelName.setText(response.body().getData().getName() + "");
+                    binding.priceHotel.setText(response.body().getData().getPricePerNight() + "");
+                    binding.personNum.setText(response.body().getData().getAvailableRooms() + "");
+                    binding.roomPrice.setText(response.body().getData().getPricePerNight() + "");
                    // binding.totalMoney.setText(0 + "");
-                    if (response.body().getHasOffer() == null) {
+                    if (response.body().getData().getHasOffer() == null) {
                         binding.offer.setText("0");
                     } else {
-                        binding.offer.setText(response.body().getHasOffer() + "");
+                        binding.offer.setText(response.body().getData().getHasOffer() + "");
                     }
 
 
@@ -169,7 +169,7 @@ public class BookingInfo extends AppCompatActivity {
 
                             Long Count = Long.valueOf((binding.dayCount.getText().toString()));
 
-                            Long x =   response.body().getPricePerNight()*sum*Count;
+                            Long x =   response.body().getData().getPricePerNight()*sum*Count;
                             binding.totalMoney.setText(x+"");
                             binding.count.setText(sum + "");
 
@@ -184,12 +184,12 @@ public class BookingInfo extends AppCompatActivity {
                         public void onClick(View v) {
                             sum++;
 
-                            if (sum > response.body().getAvailableRooms()) {
+                            if (sum > response.body().getData().getAvailableRooms()) {
                                 return;
                             }else{
                                 Long Count = Long.valueOf((binding.dayCount.getText().toString()));
 
-                                Long x =   response.body().getPricePerNight()*sum*Count;
+                                Long x =   response.body().getData().getPricePerNight()*sum*Count;
                                 binding.totalMoney.setText(x+"");
                                 binding.count.setText(sum + "");
                             }
@@ -239,13 +239,13 @@ public class BookingInfo extends AppCompatActivity {
                             Long Count = Long.valueOf((binding.dayCount.getText().toString()));
                             Long RoomCount = Long.valueOf((binding.count.getText().toString()));
 
-                            if (response.body().getHasOffer() == null) {
+                            if (response.body().getData().getHasOffer() == null) {
                                 tot = Count * Price * RoomCount;
                                 Long x =   tot*sum;
                                 binding.totalMoney.setText(x + "");
 
                             } else {
-                                int offer = Integer.parseInt(response.body().getHasOffer() + "");
+                                int offer = Integer.parseInt(response.body().getData().getHasOffer() + "");
                                 tot = Count * Price* RoomCount;
                                 totals = tot * (offer / 100);
                                 Long x = tot - totals;
@@ -303,14 +303,14 @@ public class BookingInfo extends AppCompatActivity {
                             Long Count = Long.valueOf((binding.dayCount.getText().toString()));
                             Long RoomCount = Long.valueOf((binding.dayCount.getText().toString()));
 
-                            if (response.body().getHasOffer() == 0) {
+                            if (response.body().getData().getHasOffer() == 0) {
                                 tot = Count * Price* RoomCount;
                                 Long x =   tot*sum;
 
                                 binding.totalMoney.setText(x + "");
 
                             } else {
-                                int offer = Integer.parseInt(response.body().getHasOffer() + "");
+                                int offer = Integer.parseInt(response.body().getData().getHasOffer() + "");
                                 tot = Count * Price* RoomCount;
                                 totals = tot * (offer / 100);
                                 Long x = tot - totals;
@@ -344,7 +344,7 @@ public class BookingInfo extends AppCompatActivity {
 
 
             @Override
-            public void onFailure(Call<HotelRoom> call, Throwable t) {
+            public void onFailure(Call<RoomsExample> call, Throwable t) {
                 t.printStackTrace();
 
                 Toast.makeText(BookingInfo.this, t.getMessage(), Toast.LENGTH_SHORT).show();

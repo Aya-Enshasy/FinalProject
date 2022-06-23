@@ -50,6 +50,7 @@ public class HotelsDetails extends AppCompatActivity implements RoomsBottomSheet
         super.onCreate(savedInstanceState);
         binding = ActivityHotelsDetailsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        receiveData();
 
         swipeRefresh();
 
@@ -57,7 +58,6 @@ public class HotelsDetails extends AppCompatActivity implements RoomsBottomSheet
 
         checkInternetConnection();
         startShimmer();
-        receiveData();
         getRetrofitInstance();
         getHotelData();
         mapLocation();
@@ -67,23 +67,29 @@ public class HotelsDetails extends AppCompatActivity implements RoomsBottomSheet
 
 
     }
+    private void receiveData(){
+        if (getIntent() != null) {
+            HotelId =Integer.valueOf(getIntent().getStringExtra("hotel_id"));
+        }
+    }
+
     private void getHotelData() {
 
         Login.SP = this.getSharedPreferences(PREF_NAME ,MODE_PRIVATE);
         String token = Login.SP.getString(Login.TokenKey, "");//"No name defined" is the default value.
 
-        service.getHotelsDetails(HotelId,token).enqueue(new Callback<HotelsData>() {
+        service.getHotelsDetails(HotelId,token).enqueue(new Callback<HotelsExample>() {
             @Override
-            public void onResponse(Call<HotelsData> call, Response<HotelsData> response) {
+            public void onResponse(Call<HotelsExample> call, Response<HotelsExample> response) {
                 if (response.isSuccessful()){
                     stopShimmer();
-
-                    binding.hotelName.setText( response.body().getName());
-                    binding.rate.setText( response.body().getStar()+"");
-                    binding.location.setText(response.body().getAddress());
-                    binding.details.setText( response.body().getDetails());
-                    Glide.with(HotelsDetails.this).load(response.body().getHotelImage())
+                    binding.hotelName.setText( response.body().getData().getName());
+                    binding.rate.setText( response.body().getData().getStar()+"");
+                    binding.location.setText(response.body().getData().getAddress());
+                    binding.details.setText( response.body().getData().getDetails());
+                    Glide.with(HotelsDetails.this).load(response.body().getData().getHotelImage())
                             .into(binding.hotelImg);
+                    Toast.makeText(HotelsDetails.this, response.body().getData().getName()+"", Toast.LENGTH_SHORT).show();
                     //rooms
                     binding.button.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -105,7 +111,7 @@ public class HotelsDetails extends AppCompatActivity implements RoomsBottomSheet
                 }
             }
             @Override
-            public void onFailure(Call<HotelsData> call, Throwable t) {
+            public void onFailure(Call<HotelsExample> call, Throwable t) {
                 t.printStackTrace();
                 Toast.makeText(getApplicationContext(), t.getMessage()+"", Toast.LENGTH_LONG).show();
 
@@ -114,7 +120,7 @@ public class HotelsDetails extends AppCompatActivity implements RoomsBottomSheet
         });
 
 
-}
+    }
 
     private void getAmenities() {
 
@@ -146,7 +152,7 @@ public class HotelsDetails extends AppCompatActivity implements RoomsBottomSheet
         });
 
 
-}
+    }
 
     @Override
     public void onButtonClicked(String text) {
@@ -167,11 +173,12 @@ public class HotelsDetails extends AppCompatActivity implements RoomsBottomSheet
         binding.amenities.setVisibility(View.GONE);
         binding.map.setVisibility(View.GONE);
         binding.imgv.setVisibility(View.GONE);
-        binding.shimmerLayout.startShimmer();
+        binding.shimmerLayout.setVisibility(View.VISIBLE);
     }
 
     private void stopShimmer(){
-        binding.shimmerLayout.stopShimmer();
+//        binding.shimmerLayout.stopShimmer();
+        binding.relativeLayout.setVisibility(View.VISIBLE);
         binding.button.setVisibility(View.VISIBLE);
         binding.amenities.setVisibility(View.VISIBLE);
         binding.map.setVisibility(View.VISIBLE);
@@ -193,11 +200,6 @@ public class HotelsDetails extends AppCompatActivity implements RoomsBottomSheet
         }
     }
 
-    private void receiveData(){
-        if (getIntent() != null) {
-            HotelId = getIntent().getIntExtra("hotel_id",0);
-        }
-    }
 
     private void getRetrofitInstance(){
         service = Service.ApiClient.getRetrofitInstance();

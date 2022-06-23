@@ -41,7 +41,7 @@ import static com.example.pablo.activity.Login.parseError;
 
 public class RoomsBottomSheet extends BottomSheetDialogFragment {
     private BottomSheetListener mListener;
-    List<HotelRoom> list ;
+    List<com.example.pablo.model.rooms.Data> list ;
     RoomAdapter adapter;
     Service service;
     RecyclerView recyclerView;
@@ -79,9 +79,9 @@ public class RoomsBottomSheet extends BottomSheetDialogFragment {
         Login.SP = getActivity().getSharedPreferences(PREF_NAME ,MODE_PRIVATE);
         String token = Login.SP.getString(Login.TokenKey, "");//"No name defined" is the default value.
 
-        service.getRoom(token).enqueue(new Callback<List<HotelRoom>>() {
+        service.getRoom(token).enqueue(new Callback<List<com.example.pablo.model.rooms.Data>>() {
             @Override
-            public void onResponse(Call<List<HotelRoom>> call, Response<List<HotelRoom>> response) {
+            public void onResponse(Call<List<com.example.pablo.model.rooms.Data>> call, Response<List<com.example.pablo.model.rooms.Data>> response) {
 
                 if (response.isSuccessful()) {
                     list = response.body();
@@ -100,7 +100,7 @@ public class RoomsBottomSheet extends BottomSheetDialogFragment {
 
 
             @Override
-            public void onFailure(Call<List<HotelRoom>> call, Throwable t) {
+            public void onFailure(Call<List<com.example.pablo.model.rooms.Data>> call, Throwable t) {
 
                 Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.e("error", t.getMessage());
@@ -157,7 +157,6 @@ public class RoomsBottomSheet extends BottomSheetDialogFragment {
                     } else {
                         rooms_count.setText(RoomCount + "");
                     }
-                    Log.e("rooms", RoomCount + "");
                 }
             });
 

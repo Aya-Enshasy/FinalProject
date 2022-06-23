@@ -57,7 +57,7 @@ public class AllHotelsAdapter extends RecyclerView.Adapter<AllHotelsAdapter.View
 
     @Override
     public void onBindViewHolder(AllHotelsAdapter.ViewHolder holder, int position) {
-        if (holder!=null) {
+      //  if (holder!=null) {
             holder.name.setText(list.get(position).getName());
             holder.city.setText(list.get(position).getAddress());
             holder.rate.setText(list.get(position).getStar()+"");
@@ -76,7 +76,7 @@ public class AllHotelsAdapter extends RecyclerView.Adapter<AllHotelsAdapter.View
                     context.startActivity(intent);
                 }
             });
-        }
+     //   }
 
         holder.details.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -98,7 +98,7 @@ public class AllHotelsAdapter extends RecyclerView.Adapter<AllHotelsAdapter.View
             public void onClick(View view) {
 
                 Intent intent = new Intent(context, HotelsDetails.class);
-                intent.putExtra("hotel_id", list.get(position).getId());
+                intent.putExtra("hotel_id", list.get(position).getId()+"");
                 context.startActivity(intent);
             }
         });

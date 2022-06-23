@@ -6,83 +6,84 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Data implements Serializable{
-        @SerializedName("id")
-        @Expose
-        private Long id;
-        @SerializedName("user_id")
-        @Expose
-        private Long userId;
-        @SerializedName("status")
-        @Expose
-        private Long status;
-        @SerializedName("created_at")
-        @Expose
-        private String createdAt;
-        @SerializedName("hotel_name")
-        @Expose
-        private String hotelName;
-        @SerializedName("total_price")
-        @Expose
-        private Long totalPrice;
-        @SerializedName("order_items_count")
-        @Expose
-        private Long orderItemsCount;
-        private final static long serialVersionUID = -991755553876022130L;
 
-        public Long getId() {
-            return id;
-        }
+    @SerializedName("id")
+    @Expose
+    private Long id;
+    @SerializedName("user_id")
+    @Expose
+    private Long userId;
+    @SerializedName("status")
+    @Expose
+    private String status;
+    @SerializedName("time_count")
+    @Expose
+    private String timeCount;
+    @SerializedName("hotel_name")
+    @Expose
+    private String hotelName;
+    @SerializedName("total_price")
+    @Expose
+    private Long totalPrice;
+    @SerializedName("order_items_count")
+    @Expose
+    private Long orderItemsCount;
+    private final static long serialVersionUID = -1398470121324438103L;
 
-        public void setId(Long id) {
-            this.id = id;
-        }
+    public Long getId() {
+        return id;
+    }
 
-        public Long getUserId() {
-            return userId;
-        }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-        public void setUserId(Long userId) {
-            this.userId = userId;
-        }
+    public Long getUserId() {
+        return userId;
+    }
 
-        public Long getStatus() {
-            return status;
-        }
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
-        public void setStatus(Long status) {
-            this.status = status;
-        }
+    public String getStatus() {
+        return status;
+    }
 
-        public String getCreatedAt() {
-            return createdAt;
-        }
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-        public void setCreatedAt(String createdAt) {
-            this.createdAt = createdAt;
-        }
+    public String getTimeCount() {
+        return timeCount;
+    }
 
-        public String getHotelName() {
-            return hotelName;
-        }
+    public void setTimeCount(String timeCount) {
+        this.timeCount = timeCount;
+    }
 
-        public void setHotelName(String hotelName) {
-            this.hotelName = hotelName;
-        }
+    public String getHotelName() {
+        return hotelName;
+    }
 
-        public Long getTotalPrice() {
-            return totalPrice;
-        }
+    public void setHotelName(String hotelName) {
+        this.hotelName = hotelName;
+    }
 
-        public void setTotalPrice(Long totalPrice) {
-            this.totalPrice = totalPrice;
-        }
+    public Long getTotalPrice() {
+        return totalPrice;
+    }
 
-        public Long getOrderItemsCount() {
-            return orderItemsCount;
-        }
+    public void setTotalPrice(Long totalPrice) {
+        this.totalPrice = totalPrice;
+    }
 
-        public void setOrderItemsCount(Long orderItemsCount) {
-            this.orderItemsCount = orderItemsCount;
-        }
+    public Long getOrderItemsCount() {
+        return orderItemsCount;
+    }
+
+    public void setOrderItemsCount(Long orderItemsCount) {
+        this.orderItemsCount = orderItemsCount;
+    }
 
 }

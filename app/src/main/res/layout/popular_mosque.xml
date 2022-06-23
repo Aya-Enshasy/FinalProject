@@ -11,6 +11,16 @@
     android:elevation="@dimen/_15sdp"
    >
 
+<!--    <com.flaviofaria.kenburnsview.KenBurnsView-->
+<!--        android:id="@+id/tourImage"-->
+<!--        android:layout_width="@dimen/_200sdp"-->
+<!--        android:layout_height="@dimen/_220sdp"-->
+<!--        android:scaleType="centerCrop"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.0"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/Mosque_imageView"
         android:layout_width="@dimen/_200sdp"
@@ -38,14 +48,14 @@
 
     <ImageView
         android:id="@+id/imageView15"
-        android:layout_width="17dp"
-        android:layout_height="17dp"
-        android:layout_marginStart="224dp"
-        android:layout_marginLeft="224dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:padding="@dimen/_7sdp"
         android:layout_marginTop="192dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="@+id/Mosque_imageView"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/maps"
+        app:srcCompat="@drawable/map_marker_free_icon_font"
         tools:ignore="VectorDrawableCompat" />
 
 

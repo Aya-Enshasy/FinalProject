@@ -8,7 +8,6 @@ import com.google.gson.annotations.SerializedName;
 
 public class OrderDetailsExample implements Serializable
 {
-
     @SerializedName("message")
     @Expose
     private String message;
@@ -18,7 +17,7 @@ public class OrderDetailsExample implements Serializable
     @SerializedName("hotel_order_items")
     @Expose
     private List<HotelOrderItem> hotelOrderItems = null;
-    private final static long serialVersionUID = 730627148095193303L;
+    private final static long serialVersionUID = -252835484541446402L;
 
     public String getMessage() {
         return message;

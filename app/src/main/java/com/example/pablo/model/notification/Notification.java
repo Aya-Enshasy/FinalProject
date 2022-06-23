@@ -1,13 +1,12 @@
 
-package com.example.pablo.model.hotels;
+package com.example.pablo.model.notification;
 
 import java.io.Serializable;
-
-import com.example.pablo.model.hotel.HotelsData;
+import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class HotelsExample implements Serializable
+public class Notification implements Serializable
 {
 
     @SerializedName("message")
@@ -15,8 +14,8 @@ public class HotelsExample implements Serializable
     private String message;
     @SerializedName("data")
     @Expose
-    private HotelsData data;
-    private final static long serialVersionUID = -5286599594202548749L;
+    private List<NotificationData> data = null;
+    private final static long serialVersionUID = 5807021806896011436L;
 
     public String getMessage() {
         return message;
@@ -26,11 +25,11 @@ public class HotelsExample implements Serializable
         this.message = message;
     }
 
-    public HotelsData getData() {
+    public List<NotificationData> getData() {
         return data;
     }
 
-    public void setData(HotelsData data) {
+    public void setData(List<NotificationData> data) {
         this.data = data;
     }
 
