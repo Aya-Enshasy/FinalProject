@@ -97,6 +97,7 @@ dependencies {
     //zoom
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.flaviofaria:kenburnsview:1.0.7'
+    implementation 'com.miguelcatalan:materialsearchview:1.4.0'
 
 
 

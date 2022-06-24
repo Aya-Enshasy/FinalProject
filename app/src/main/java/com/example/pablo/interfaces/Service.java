@@ -87,7 +87,7 @@ public interface Service {
 
     //hotels details
     @GET("hotels/{id}")
-    Call<HotelsExample> getHotelsDetails(@Path("id") int id, @Header("Authorization") String token);
+    Call<HotelsExample> getHotelsDetails(@Path("id") Long id, @Header("Authorization") String token);
 
     //room
     @GET("hotel_rooms")
@@ -151,12 +151,13 @@ public interface Service {
             @Field("exp_month") Long exp_month,
             @Field("exp_year") Long exp_year,
             @Field("cvc") Long cvc,
+
             @Header("Authorization") String token
              );
 
 
-    @POST("searchHotelByName")
-    Call<HotelsData> search(@Header("Authorization") String token);
+    @GET("searchHotelByNameDesc")
+    Call<HotelsData> search(@Header("Authorization") String token,@Query("data") String name);
 
 
     @POST("updateAuthAvatar")
