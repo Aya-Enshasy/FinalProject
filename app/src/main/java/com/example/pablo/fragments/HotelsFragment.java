@@ -38,6 +38,7 @@ import com.example.pablo.adapters.PopularHotelsAdapter;
 import com.example.pablo.databinding.FragmentHotelsBinding;
 import com.example.pablo.model.hotel.Hotels;
 import com.example.pablo.model.hotel.HotelsData;
+import com.example.pablo.model.hotel.SearchHotel;
 import com.example.pablo.model.login.DataLogin;
 import com.example.pablo.model.login.ExampleLogin;
 import com.google.gson.Gson;
@@ -127,6 +128,18 @@ public class HotelsFragment extends Fragment {
         getHotel();
         getPopularHotel();
 
+        binding.searchView3.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                checkInternetConnection();
+                startShimmer();
+                adapter();
+                getRetrofitInstance();
+                getHotel();
+                getPopularHotel();
+                return false;
+            }
+        });
 
         binding.searchView3.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -350,14 +363,15 @@ public class HotelsFragment extends Fragment {
 
         String search = binding.searchView3.getQuery().toString();
 
-        service.search(token,search).enqueue(new Callback<HotelsData>() {
+        service.search(token,search).enqueue(new Callback<SearchHotel>() {
             @Override
-            public void onResponse(Call<HotelsData> call, Response<HotelsData> response) {
+            public void onResponse(Call<SearchHotel> call, Response<SearchHotel> response) {
                 if (response.isSuccessful()){
-                    Toast.makeText(getActivity(), " "+ search, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getActivity(), " "+ search, Toast.LENGTH_SHORT).show();
 //                    list.clear();
-                    allHotelsAdapter.setData(list);
-                    allHotelsAdapter.notifyDataSetChanged();
+                    Log.e("search",response.body().getData().size()+"");
+                    allHotelsAdapter.setData(response.body().getData());
+                  //  Log.e("search",response.body().+"");
                 }
 
 
@@ -365,7 +379,7 @@ public class HotelsFragment extends Fragment {
 
             @SuppressLint("CheckResult")
             @Override
-            public void onFailure(Call<HotelsData> call, Throwable t) {
+            public void onFailure(Call<SearchHotel> call, Throwable t) {
             }
         });
 

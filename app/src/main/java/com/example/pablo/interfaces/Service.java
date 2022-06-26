@@ -6,9 +6,11 @@ import com.example.pablo.model.buy_one_order.BuyOneOrderExample;
 import com.example.pablo.model.buyorder.BuyOrderExample;
 import com.example.pablo.model.churches.ChurchesExample;
 import com.example.pablo.model.edit.EditExample;
+import com.example.pablo.model.edit_order.EditOrderDetails;
 import com.example.pablo.model.hotel.HotelRoom;
 import com.example.pablo.model.hotel.Hotels;
 import com.example.pablo.model.hotel.HotelsData;
+import com.example.pablo.model.hotel.SearchHotel;
 import com.example.pablo.model.hotels.HotelsExample;
 import com.example.pablo.model.logout.LogOutExample;
 import com.example.pablo.model.RegisterRequest;
@@ -95,7 +97,7 @@ public interface Service {
 
     //room
     @GET("hotel_rooms/{id}")
-    Call<RoomsExample> getRoomDetails(@Path("id") Long id, @Header("Authorization") String token);
+    Call<RoomsExample> getRoomDetails(@Path("id") Long id,@Header("Authorization") String token);
 
     //booking info
     @FormUrlEncoded
@@ -105,6 +107,7 @@ public interface Service {
             @Field("check_out") String check_out,
             @Field("room_count") String room_count,
             @Field("room_id") String room_id,
+            @Field("order_id") String order_id,
             @Header("Authorization") String token
     );
 
@@ -121,11 +124,11 @@ public interface Service {
     @FormUrlEncoded
     @POST("orders/{id}")
     Call<EditExample> editItem(
-            @Path("id") Long itemId,
+            @Path("id") Long roomId,
             @Field("check_in") String check_in,
             @Field("check_out") String check_out,
             @Field("room_count") String room_count,
-            @Field("room_id") Long room_id,
+            @Field("order_id") Long order_id,
             @Field("_method") String _method,
             @Header("Authorization") String token);
 
@@ -142,6 +145,11 @@ public interface Service {
     Call<OrderDetailsExample> getHotelOrdersDetails(@Path("id") Long itemId,
                                                     @Header("Authorization") String token);
 
+    //get edit details
+
+    @GET("orders/{id}")
+    Call<EditOrderDetails> getEditOrdersDetails(@Path("id") Long id,  @Header("Authorization") String token);
+
     //Payment
     @FormUrlEncoded
     @POST("buyAllOrderItems")
@@ -151,13 +159,16 @@ public interface Service {
             @Field("exp_month") Long exp_month,
             @Field("exp_year") Long exp_year,
             @Field("cvc") Long cvc,
-
             @Header("Authorization") String token
              );
 
 
     @GET("searchHotelByNameDesc")
-    Call<HotelsData> search(@Header("Authorization") String token,@Query("data") String name);
+    Call<SearchHotel> search(@Header("Authorization") String token, @Query("data") String name);
+
+
+    @GET("searchHotelByNameDesc")
+    Call<ChurchesExample> ChurchesSearch(@Header("Authorization") String token, @Query("data") String name);
 
 
     @POST("updateAuthAvatar")
@@ -169,11 +180,11 @@ public interface Service {
     //**************************************************************************
     //mosque
     @GET("mosques")
-    Call<List<com.example.pablo.model.mosques.Data>> getMosques(@Header("Authorization") String token);
+    Call<List<MosqueExample>> getMosques(@Header("Authorization") String token);
 
     //Top mosque
     @GET("getTopMosques")
-    Call<List<com.example.pablo.model.mosques.Data>> getTopMosques(@Header("Authorization") String token);
+    Call<List<MosqueExample>> getTopMosques(@Header("Authorization") String token);
 
     //mosque details
     @GET("mosques/{id}")
@@ -181,11 +192,11 @@ public interface Service {
 
     //churches
     @GET("churches")
-    Call<List<Data>> getChurches(@Header("Authorization") String token);
+    Call<List<ChurchesExample>> getChurches(@Header("Authorization") String token);
 
     //Top churches
     @GET("getTopChurches")
-    Call<List<Data>> getTopChurches(@Header("Authorization") String token);
+    Call<List<ChurchesExample>> getTopChurches(@Header("Authorization") String token);
 
     //churches details
     @GET("churches/{id}")

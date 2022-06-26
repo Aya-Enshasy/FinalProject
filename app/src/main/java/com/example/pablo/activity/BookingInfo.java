@@ -20,6 +20,7 @@ import com.example.pablo.databinding.ActivityBookingInfoBinding;
 import com.example.pablo.model.bookingInfo.CartExample;
 import com.example.pablo.interfaces.Service;
 import com.example.pablo.model.edit.EditExample;
+import com.example.pablo.model.edit_order.EditOrderDetails;
 import com.example.pablo.model.hotel.HotelRoom;
 import com.example.pablo.model.rooms.RoomsExample;
 import com.google.gson.Gson;
@@ -55,6 +56,30 @@ public class BookingInfo extends AppCompatActivity {
         binding = ActivityBookingInfoBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        service = Service.ApiClient.getRetrofitInstance();
+
+
+        if (getIntent() != null) {
+
+            boolean isEdit = getIntent().getBooleanExtra("isEdit", false);
+            orderId = getIntent().getLongExtra("orderId", 0);
+            roomId = getIntent().getLongExtra("id", 0);
+            Log.e("room1",roomId+"");
+            Log.e("orderId1",orderId+"");
+
+            if (isEdit) {
+                editRoomDetails();
+                getEditOrderDetails();
+                binding.addToCart.setVisibility(View.GONE);
+                binding.editCart.setVisibility(View.VISIBLE);
+            } else {
+                binding.addToCart.setVisibility(View.VISIBLE);
+                binding.editCart.setVisibility(View.GONE);
+
+            } getRoomDetails(roomId);
+
+        }
+
         checkInternetConnection();
         startShimmer();
         getRetrofitInstance();
@@ -74,10 +99,10 @@ public class BookingInfo extends AppCompatActivity {
         String count = binding.count.getText().toString();
 
 
-        service.bookInfo(check_in, checkout, count, roomId + "", token).enqueue(new Callback<CartExample>() {
+        service.bookInfo(check_in, checkout, count, roomId + "", orderId + "", token).enqueue(new Callback<CartExample>() {
             @Override
             public void onResponse(Call<CartExample> call, retrofit2.Response<CartExample> response) {
-                Log.e("response code", response.code() + "");
+                Log.e("response code", response.code() + "book");
 
                 if (response.isSuccessful()) {
                     stopShimmer();
@@ -110,7 +135,7 @@ public class BookingInfo extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onResponse(Call<RoomsExample> call, Response<RoomsExample> response) {
-                Log.e("response code", response.code() + "");
+                Log.e("response code", response.code() + "rd");
 
                 if (response.body() != null) {
                     stopShimmer();
@@ -128,7 +153,7 @@ public class BookingInfo extends AppCompatActivity {
 
                     binding.count.setText("1");
 
-                    binding.totalMoney.setText(response.body().getData().getPricePerNight() + "");
+                   // binding.totalMoney.setText(response.body().getData().getPricePerNight() + "");
 
                     binding.dayCount.setText("1");
 
@@ -356,7 +381,7 @@ public class BookingInfo extends AppCompatActivity {
 
     }
 
-    private void editRoomDetails(Long roomId,Long orderItemId) {
+    private void editRoomDetails() {
 
         Login.SP = this.getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         String token = Login.SP.getString(Login.TokenKey, "");//"No name defined" is the default value.
@@ -364,10 +389,10 @@ public class BookingInfo extends AppCompatActivity {
 
         String count = binding.count.getText().toString();
 
-        service.editItem(orderItemId, checkInDate, checkOutDate, count,roomId , "put", token).enqueue(new Callback<EditExample>() {
+        service.editItem(orderId, checkInDate, checkOutDate, count, roomId, "put", token).enqueue(new Callback<EditExample>() {
             @Override
             public void onResponse(Call<EditExample> call, Response<EditExample> response) {
-                Log.e("response code", response.code() + "");
+                Log.e("response code", response.code() + "edr");
                 if (response.isSuccessful()) {
 //                    getRoomDetails(roomId);
                     stopShimmer();
@@ -534,7 +559,240 @@ public class BookingInfo extends AppCompatActivity {
 
     }
 
+    private void getEditOrderDetails() {
 
+        Login.SP = this.getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        String token = Login.SP.getString(Login.TokenKey, "");//"No name defined" is the default value.
+
+        service.getEditOrdersDetails(orderId, token).enqueue(new Callback<EditOrderDetails>() {
+            @SuppressLint("SetTextI18n")
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onResponse(Call<EditOrderDetails> call, Response<EditOrderDetails> response) {
+                Log.e("response code", response.code() + "edito");
+
+                if (response.body() != null) {
+                    stopShimmer();
+
+                    String myFormat = "dd-MM-yyyy"; //MMM dd, ''yyyy
+                    sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+                    Date currentDate = new Date();// get the current date
+                    currentDate.setDate(currentDate.getDate() + 1);
+                    binding.chikoutDate.setText(sdf.format(currentDate)+"");
+
+                    Date currentDate1 = new Date();// get the current date
+                    currentDate1.setDate(currentDate1.getDate());
+                    binding.chikinDate.setText(sdf.format(currentDate1)+"");
+
+//                    binding.count.setText(response.body().getData().getRoomCount()+"");
+//                    binding.roomPrice.setText(response.body().getData().getRoomPricePerNight()+"");
+//                    binding.totalMoney.setText(response.body().getData().getOrderTotalPrice() + "");
+//                    binding.dayCount.setText(response.body().getData().getTotalNights()+"");
+///////////////////////////////////////////////////////////
+//                    binding.hotelName.setText(response.body().getData().getName() + "");
+//                    binding.priceHotel.setText(response.body().getData().getPricePerNight() + "");
+//                    binding.personNum.setText(response.body().getData().getAvailableRooms() + "");
+//                    binding.roomPrice.setText(response.body().getData().getPricePerNight() + "");
+
+//                    if (response.body().getData().getRoomHasOffer() == null) {
+//                        binding.offer.setText("0");
+//                    } else {
+//                        binding.offer.setText(response.body().getData().getRoomHasOffer() + "");
+//                    }
+
+                    if(binding.count.getText().toString().equals(0)){
+                        binding.chikinDate.setText(00+"");
+                        binding.chikoutDate.setEnabled(false);
+                        Toast.makeText(BookingInfo.this, "add day count", Toast.LENGTH_SHORT).show();
+                    }
+
+
+//-----------------------------room count---------------------------------------
+
+
+                    binding.min.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            sum--;
+                            if (sum < 1) {
+                                sum = 1;
+                                return;
+                            }
+
+
+                            Long Count = Long.valueOf((binding.dayCount.getText().toString()));
+
+                            Long x =   response.body().getData().getRoomPricePerNight()*sum*Count;
+                            binding.totalMoney.setText(x+"");
+                            binding.count.setText(sum + "");
+
+
+                        }
+                    });
+                    //add
+                    binding.add.setOnClickListener(new View.OnClickListener() {
+
+                        @RequiresApi(api = Build.VERSION_CODES.N)
+                        @Override
+                        public void onClick(View v) {
+                            sum++;
+
+//                            if (sum > response.body().getData().getAvailableRooms()) {
+//                                return;
+//                            }else{
+                                Long Count = Long.valueOf((binding.dayCount.getText().toString()));
+
+                                Long x =   response.body().getData().getRoomPricePerNight()*sum*Count;
+                                binding.totalMoney.setText(x+"");
+                                binding.count.setText(sum + "");
+                         //   }
+
+
+
+
+
+
+                        }
+                    });
+//-------------------------------- check in date -------------------------------------
+                    final Calendar myCalendar = Calendar.getInstance();
+                    DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+                        @RequiresApi(api = Build.VERSION_CODES.N)
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                            // TODO Auto-generated method stub
+                            myCalendar.set(Calendar.YEAR, year);
+                            myCalendar.set(Calendar.MONTH, monthOfYear);
+                            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                            String myFormat = "dd-MM-yyyy"; //MMM dd, ''yyyy
+                            sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+                            date2 = myCalendar.getTime();
+
+                            binding.chikinDate.setText(sdf.format(date2)+"");
+                            //day count
+                            if (date3 != null && date2 != null) {
+                                Long day = (date3.getTime() - date2.getTime()) / (1000 * 60 * 60 * 24);
+                                binding.dayCount.setText(day + "");
+                            }
+
+                            //total price
+                            Long Price = Long.valueOf((binding.priceHotel.getText().toString()));
+                            Long Count = Long.valueOf((binding.dayCount.getText().toString()));
+                            Long RoomCount = Long.valueOf((binding.count.getText().toString()));
+
+                            if (response.body().getData().getRoomHasOffer() == null) {
+                                tot = Count * Price * RoomCount;
+                                Long x =   tot*sum;
+                                binding.totalMoney.setText(x + "");
+
+                            } else {
+                                int offer = Integer.parseInt(response.body().getData().getRoomHasOffer() + "");
+                                tot = Count * Price* RoomCount;
+                                totals = tot * (offer / 100);
+                                Long x = tot - totals;
+                                Long x1 =   x*sum;
+                                binding.totalMoney.setText(x1 + "");
+
+                            }
+
+                        }
+                    };
+                    binding.chikinDate.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            new DatePickerDialog(BookingInfo.this, date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                                    myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+
+                        }
+                    });
+                    binding.chikinDate.setVisibility(View.VISIBLE);
+
+
+//-------------------------------- check out Date -------------------------------------
+                    final Calendar myCalendar1 = Calendar.getInstance();
+                    DatePickerDialog.OnDateSetListener date1 = new DatePickerDialog.OnDateSetListener() {
+                        @RequiresApi(api = Build.VERSION_CODES.N)
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                            // TODO Auto-generated method stub
+                            myCalendar1.set(Calendar.YEAR, year);
+                            myCalendar1.set(Calendar.MONTH, monthOfYear);
+                            myCalendar1.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+
+                            String myFormat = "dd-MM-yyyy"; //In which you need put here
+
+                            sdf = new SimpleDateFormat(myFormat, Locale.US);
+                            date3 = myCalendar1.getTime();
+                            binding.chikoutDate.setText(sdf.format(date3)+"");
+
+                            //day count
+                            if (date3 != null && date2 != null) {
+                                long day = (date3.getTime() - date2.getTime()) / (1000 * 60 * 60 * 24);
+                                binding.dayCount.setText(day + "");
+                            }
+
+                            //total price
+                            Long Price = Long.valueOf(((binding.priceHotel.getText().toString())));
+                            Long Count = Long.valueOf((binding.dayCount.getText().toString()));
+                            Long RoomCount = Long.valueOf((binding.dayCount.getText().toString()));
+
+                            if (response.body().getData().getRoomHasOffer() == 0) {
+                                tot = Count * Price* RoomCount;
+                                Long x =   tot*sum;
+
+                                binding.totalMoney.setText(x + "");
+
+                            } else {
+                                int offer = Integer.parseInt(response.body().getData().getRoomHasOffer() + "");
+                                tot = Count * Price* RoomCount;
+                                totals = tot * (offer / 100);
+                                Long x = tot - totals;
+                                Long x1 =   x*sum;
+                                binding.totalMoney.setText(x1 + "");
+
+                            }
+
+
+                        }
+                    };
+                    binding.chikoutDate.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            new DatePickerDialog(BookingInfo.this, date1, myCalendar1.get(Calendar.YEAR), myCalendar1.get(Calendar.MONTH),
+                                    myCalendar1.get(Calendar.DAY_OF_MONTH)).show();
+                        }
+                    });
+                    binding.chikoutDate.setVisibility(View.VISIBLE);
+
+
+                    Log.e("Success", new Gson().toJson(response.body()));
+                } else {
+
+                    String errorMessage = parseError(response);
+                    Log.e("errorMessage", errorMessage + "");
+                    Toast.makeText(getBaseContext(), response.message() + "", Toast.LENGTH_LONG).show();
+
+                }
+            }
+
+
+
+            @Override
+            public void onFailure(Call<EditOrderDetails> call, Throwable t) {
+                t.printStackTrace();
+
+                Toast.makeText(BookingInfo.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+
+        });
+
+
+    }
 
     private void startShimmer(){
         binding.shimmerLayout.startShimmer();
@@ -573,22 +831,11 @@ public class BookingInfo extends AppCompatActivity {
 
     private void getRetrofitInstance(){
         service = Service.ApiClient.getRetrofitInstance();
+
     }
 
     public void getIntentData(){
-        if (getIntent() != null) {
 
-            boolean isEdit = getIntent().getBooleanExtra("isEdit", false);
-            orderId = getIntent().getLongExtra("orderId", 0);
-            roomId = getIntent().getLongExtra("id", 0);
-
-
-            if (isEdit) {
-                editRoomDetails(roomId,orderId);
-            } else {
-                getRoomDetails(roomId);
-            }
-        }
     }
 
     private void addToCartButton(){
@@ -598,6 +845,7 @@ public class BookingInfo extends AppCompatActivity {
                 bookNow();
             }
         });
+
 
     }
 

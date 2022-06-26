@@ -1,19 +1,19 @@
-package com.example.pablo.model.edit;
+
+package com.example.pablo.model.edit_order;
 
 import java.io.Serializable;
-import java.util.List;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Data implements Serializable
 {
+
     @SerializedName("id")
     @Expose
     private Integer id;
     @SerializedName("user_id")
     @Expose
-    private Integer userId;
+    private Object userId;
     @SerializedName("order_id")
     @Expose
     private Integer orderId;
@@ -28,7 +28,7 @@ public class Data implements Serializable
     private String checkOut;
     @SerializedName("room_count")
     @Expose
-    private String roomCount;
+    private Integer roomCount;
     @SerializedName("total_nights")
     @Expose
     private Integer totalNights;
@@ -50,7 +50,7 @@ public class Data implements Serializable
     @SerializedName("created_at")
     @Expose
     private String createdAt;
-    private final static long serialVersionUID = 6593304715990283261L;
+    private final static long serialVersionUID = -8713480536148653273L;
 
     public Integer getId() {
         return id;
@@ -60,11 +60,11 @@ public class Data implements Serializable
         this.id = id;
     }
 
-    public Integer getUserId() {
+    public Object getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Object userId) {
         this.userId = userId;
     }
 
@@ -100,11 +100,11 @@ public class Data implements Serializable
         this.checkOut = checkOut;
     }
 
-    public String getRoomCount() {
+    public Integer getRoomCount() {
         return roomCount;
     }
 
-    public void setRoomCount(String roomCount) {
+    public void setRoomCount(Integer roomCount) {
         this.roomCount = roomCount;
     }
 

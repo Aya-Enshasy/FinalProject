@@ -41,7 +41,6 @@ public class AllHotelsAdapter extends RecyclerView.Adapter<AllHotelsAdapter.View
         this.context = context;
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     public void setData(List<HotelsData> list) {
         this.list = list;
         notifyDataSetChanged();

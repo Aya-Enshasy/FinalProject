@@ -30,6 +30,7 @@ import com.example.pablo.interfaces.Service;
 import com.example.pablo.databinding.RoomItemBinding;
 import com.example.pablo.model.hotel.HotelRoom;
 import com.example.pablo.model.rooms.Data;
+import com.example.pablo.model.rooms.RoomsExample;
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
 import com.smarteist.autoimageslider.SliderAnimations;
 
@@ -39,7 +40,7 @@ import java.util.List;
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder>{
-    private List<com.example.pablo.model.rooms.Data> list  ;
+    private List<Data> list  ;
     Context context;
     private RoomsInterface listener ;
 
@@ -66,32 +67,40 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder>{
         holder.binding.availableRoom.setText(list.get(position).getAvailableRooms()+"");
 
 
-        Log.e("image1",list.get(0).getRoomImages().get(0)+"");
+        if (list.get(position).getAvailableRooms()==0){
+            holder.binding.book.setEnabled(false);
+            holder.binding.book.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.disable_button));
+        }else{
+            holder.binding.book.setEnabled(true);
+            holder.binding.book.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.booknow));
 
-//         Glide.with(context).load(list.get(1).getRoomImages()).into((holder).binding.img2);
-//
-//         Glide.with(context).load(list.get(2).getRoomImages()).into((holder).binding.img3);
+        }
 
-        Glide.with(context)
-                .load(list.get(0).getRoomImages().get(0))
-                .placeholder(R.drawable.mosqes)
-                .into(holder.binding.img1);
+        List<String> imgeList = list.get(position).getRoomImages();
+        switch (imgeList.size()) {
+            case 1:
+                Glide.with(context).load(imgeList.get(0)).placeholder(R.drawable.bed1).into(holder.binding.img1);
+                break;
+            case 2:
+                Glide.with(context).load(imgeList.get(0)).placeholder(R.drawable.bed1).into(holder.binding.img1);
+                Glide.with(context).load(imgeList.get(1)).placeholder(R.drawable.bed1).into(holder.binding.img2);
+                break;
+            case 3:
+                Glide.with(context).load(imgeList.get(0)).placeholder(R.drawable.bed1).into(holder.binding.img1);
+                Glide.with(context).load(imgeList.get(1)).placeholder(R.drawable.bed1).into(holder.binding.img2);
+                Glide.with(context).load(list.get(position).getRoomImages().get(2)).placeholder(R.drawable.bed1).into(holder.binding.img3);
+
+        }
 
 
         listener.onItemRoomClick(list.get(position).getAvailableRooms());
-
-
-        if (list.get(position).getAvailableRooms()==0){
-            holder.binding.book.setEnabled(false);
-            holder.binding.book.setBackgroundDrawable(context.getResources()
-                    .getDrawable(R.drawable.disable_button));
-        }
 
         holder.binding.book.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 listener.onItemClick(list.get(position).getId());
+
 
             }
         });
@@ -105,7 +114,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder>{
     }
 
 
-    public void setData(List<com.example.pablo.model.rooms.Data> list) {
+    public void setData(List<Data> list) {
         this.list = list;
         notifyDataSetChanged();
     }
