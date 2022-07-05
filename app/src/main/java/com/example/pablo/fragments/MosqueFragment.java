@@ -33,10 +33,13 @@ import com.example.pablo.interfaces.MyInterface;
 import com.example.pablo.interfaces.Service;
 import com.example.pablo.adapters.MosqueAdapter;
 import com.example.pablo.databinding.FragmentMosqueBinding;
+import com.example.pablo.model.churches.TopChurches;
 import com.example.pablo.model.hotel.SearchHotel;
-import com.example.pablo.model.mosques.Data;
+
 import com.example.pablo.adapters.popularMosquesAdapter;
+import com.example.pablo.model.mosques.Datum;
 import com.example.pablo.model.mosques.MosqueExample;
+import com.example.pablo.model.mosques.TopMosque;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,14 +50,15 @@ import retrofit2.Response;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
-import static com.example.pablo.activity.Login.PREF_NAME;
 import static com.example.pablo.activity.Login.parseError;
+import static com.example.pablo.activity.Signup.PREF_NAME;
 
 public class MosqueFragment extends Fragment {
 
     MosqueAdapter mosqueAdapter;
     FragmentMosqueBinding binding;
-    List<MosqueExample> list;
+    List<TopMosque> list;
+    List<Datum> list1;
     Service service;
     boolean isConnected = false;
     ConnectivityManager connectivityManager;
@@ -107,8 +111,7 @@ public class MosqueFragment extends Fragment {
         getMosque();
         getPopularMosque();
         startShimmer();
-
-
+//
         binding.searchView3.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
@@ -144,16 +147,16 @@ public class MosqueFragment extends Fragment {
         String token = Login.SP.getString(Login.TokenKey, "");//"No name defined" is the default value.
 
 
-        service.getMosques(token).enqueue(new Callback<List<MosqueExample>>() {
+        service.getMosques(token).enqueue(new Callback<MosqueExample>() {
             @Override
-            public void onResponse(Call<List<MosqueExample>> call, Response<List<MosqueExample>> response) {
+            public void onResponse(Call<MosqueExample> call, Response<MosqueExample>response) {
 
                 if (response.isSuccessful()) {
                     binding.recyclerview2.startLayoutAnimation();
                     stopShimmer();
 //                    Toast.makeText(getActivity(), response.message()+"", Toast.LENGTH_LONG).show();
-                    list = response.body();
-                    mosqueAdapter.setData(list);
+                    list1 = response.body().getData();
+                    mosqueAdapter.setData(list1);
 
                 }else {
                     String errorMessage = parseError(response);
@@ -163,7 +166,7 @@ public class MosqueFragment extends Fragment {
                 }
             }
             @Override
-            public void onFailure(Call<List<MosqueExample>> call, Throwable t) {
+            public void onFailure(Call<MosqueExample> call, Throwable t) {
                 Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -175,9 +178,9 @@ public class MosqueFragment extends Fragment {
         Login.SP = getActivity().getSharedPreferences(PREF_NAME ,MODE_PRIVATE);
         String token = Login.SP.getString(Login.TokenKey, "");//"No name defined" is the default value.
 
-            service.getTopMosques(token).enqueue(new Callback<List<MosqueExample>>() {
+            service.getTopMosques(token).enqueue(new Callback<List<TopMosque>>() {
                 @Override
-                public void onResponse(Call<List<MosqueExample>> call, Response<List<MosqueExample>> response) {
+                public void onResponse(Call<List<TopMosque>> call, Response<List<TopMosque>> response) {
 
                     if (response.isSuccessful()) {
                         stopShimmer();
@@ -194,7 +197,7 @@ public class MosqueFragment extends Fragment {
                     }
                 }
                 @Override
-                public void onFailure(Call<List<MosqueExample>> call, Throwable t) {
+                public void onFailure(Call<List<TopMosque>>call, Throwable t) {
 
                     Log.e( "getMessage",t.getMessage());
                     Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
@@ -331,15 +334,12 @@ public class MosqueFragment extends Fragment {
 
         String search = binding.searchView3.getQuery().toString();
 
-        service.search(token,search).enqueue(new Callback<SearchHotel>() {
+        service.mosqueSearch(token,search).enqueue(new Callback<MosqueExample> () {
             @Override
-            public void onResponse(Call<SearchHotel> call, Response<SearchHotel> response) {
+            public void onResponse(Call<MosqueExample>  call, Response<MosqueExample>  response) {
                 if (response.isSuccessful()){
-//                    Toast.makeText(getActivity(), " "+ search, Toast.LENGTH_SHORT).show();
-//                    list.clear();
                     Log.e("search",response.body().getData().size()+"");
-                  //  mosqueAdapter.setData(response.body().getData());
-                    //  Log.e("search",response.body().+"");
+                    mosqueAdapter.setData(response.body().getData());
                 }
 
 
@@ -347,7 +347,7 @@ public class MosqueFragment extends Fragment {
 
             @SuppressLint("CheckResult")
             @Override
-            public void onFailure(Call<SearchHotel> call, Throwable t) {
+            public void onFailure(Call<MosqueExample>  call, Throwable t) {
             }
         });
 

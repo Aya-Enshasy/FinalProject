@@ -49,7 +49,7 @@ public class Signup extends AppCompatActivity {
         binding = ActivitySignupBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-
+        binding.progress.setVisibility(View.GONE);
         if (!isOnLine()){
             Dialog dialog = new Dialog(getBaseContext(), R.style.NoInternet);
             dialog.setContentView(R.layout.no_internet);
@@ -85,6 +85,8 @@ public class Signup extends AppCompatActivity {
                 Input_Password = binding.password.getText().toString();
                 Input_Address = binding.address.getText().toString();
 
+                binding.progress.setVisibility(View.VISIBLE);
+                binding.progress.setIndeterminate(true);
 
                 if (!Input_Name.isEmpty() && !Input_Email.isEmpty() && !Input_Password.isEmpty() && !Input_Address.isEmpty()) {
                     String fcm_token = SP.getString(MyFirebaseMessagingService.fcmToken,"");
@@ -106,6 +108,7 @@ public class Signup extends AppCompatActivity {
                         public void onResponse(Call<Example> call, retrofit2.Response<Example> response) {
                             Log.e("response code", response.code() + "");
                             if (response.isSuccessful()) {
+                                binding.progress.setVisibility(View.GONE);
 
                                 EDIT.putLong("userId", response.body().getData().getUser().getId());
                                 EDIT.putString(FullNameKey, response.body().getData().getUser().getName());
@@ -113,12 +116,14 @@ public class Signup extends AppCompatActivity {
                                 EDIT.putString(AddressKey, response.body().getData().getUser().getAddress());
 
                                 Intent intent = new Intent(getBaseContext(), Login.class);
+                                intent.putExtra("email",binding.email.getText().toString());
+                                intent.putExtra("password",binding.password.getText().toString());
                                 startActivity(intent);
                                 Toast.makeText(getBaseContext(), response.body().getMessage() , Toast.LENGTH_LONG).show();
                                 Log.e("Success", new Gson().toJson(response.body()));
                                 finish();
                             }else {
-
+                                binding.progress.setVisibility(View.GONE);
                                 String errorMessage = parseError(response);
                                 Log.e("errorMessage", errorMessage + "");
                                 Toast.makeText(getBaseContext(), response.message()+"", Toast.LENGTH_LONG).show();
@@ -134,7 +139,7 @@ public class Signup extends AppCompatActivity {
                             t.printStackTrace();
                             Toast.makeText(getBaseContext(), t.getMessage() , Toast.LENGTH_SHORT).show();
                             call.cancel();
-
+                            binding.progress.setVisibility(View.GONE);
                         }
                     });
 
@@ -149,10 +154,10 @@ public class Signup extends AppCompatActivity {
         try {
             JSONObject jsonObject = new JSONObject(response.errorBody().string());
             JSONObject jsonObject2 = jsonObject.getJSONObject("errors");
-            JSONArray jsonArray = jsonObject2.getJSONArray("password");
+            JSONArray jsonArray = jsonObject2.getJSONArray("email");
             String s = jsonArray.getString(0);
-
             return s;
+
         } catch (Exception e) {
         }
         return errorMsg;

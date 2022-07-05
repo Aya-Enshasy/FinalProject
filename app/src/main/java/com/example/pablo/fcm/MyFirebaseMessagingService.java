@@ -16,14 +16,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import com.example.pablo.R;
-import com.example.pablo.activity.Login;
-import com.example.pablo.activity.MainActivity;
 import com.example.pablo.details_activities.HotelOrdersDetails;
-import com.example.pablo.details_activities.HotelsDetails;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -32,11 +28,14 @@ import org.json.JSONObject;
 
 import java.util.Map;
 
+import static com.example.pablo.activity.Signup.PREF_NAME;
+
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public static SharedPreferences SP;    // to read from SharedPreferences
     public static SharedPreferences.Editor EDIT;
-    public static final String PREF_NAME = "token";
-    public static final String fcmToken = "Token_K";
+//    public static final String PREF_NAME = "token";
+    public static final String fcmToken = "fcmToken_K";
+    public static final String ORDER_ID = "order_id";
     String TAG = "MyFirebaseMessagingService";
 
 
@@ -97,11 +96,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Intent intent ;
 
         intent = new Intent(this, HotelOrdersDetails.class);
-        intent.putExtra("order_id",type+"");
+
         Log.e("order_id3",type+"");
 
 
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.putExtra(ORDER_ID,type);
         contentIntent = PendingIntent.getActivity(this, 0 /* request code */, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 //        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);

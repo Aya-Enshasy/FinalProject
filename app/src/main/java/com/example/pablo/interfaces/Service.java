@@ -2,12 +2,10 @@ package com.example.pablo.interfaces;
 
 import com.example.pablo.model.amenities.Amenities;
 import com.example.pablo.model.bookingInfo.CartExample;
-import com.example.pablo.model.buy_one_order.BuyOneOrderExample;
-import com.example.pablo.model.buyorder.BuyOrderExample;
-import com.example.pablo.model.churches.ChurchesExample;
+import com.example.pablo.model.churches.AllChurches;
+import com.example.pablo.model.churches.TopChurches;
 import com.example.pablo.model.edit.EditExample;
 import com.example.pablo.model.edit_order.EditOrderDetails;
-import com.example.pablo.model.hotel.HotelRoom;
 import com.example.pablo.model.hotel.Hotels;
 import com.example.pablo.model.hotel.HotelsData;
 import com.example.pablo.model.hotel.SearchHotel;
@@ -16,15 +14,15 @@ import com.example.pablo.model.logout.LogOutExample;
 import com.example.pablo.model.RegisterRequest;
 import com.example.pablo.model.RegisterResponse;
 import com.example.pablo.model.LoginRequest;
-import com.example.pablo.model.churches.Data;
 import com.example.pablo.model.login.ExampleLogin;
 import com.example.pablo.model.RestaurantsExam;
+import com.example.pablo.model.mosquedetails.MosqueDetailsExample;
 import com.example.pablo.model.mosques.MosqueExample;
+import com.example.pablo.model.mosques.TopMosque;
 import com.example.pablo.model.notification.Notification;
 import com.example.pablo.model.order_details.OrderDetailsExample;
 import com.example.pablo.model.orders.OrdersExample;
 import com.example.pablo.model.payment.Payment;
-import com.example.pablo.model.popular_hotels.PopularHotelsExample;
 import com.example.pablo.model.register.Example;
 import com.example.pablo.model.rooms.RoomsExample;
 import com.example.pablo.model.users.UsersExample;
@@ -38,7 +36,6 @@ import okhttp3.Interceptor;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
@@ -85,7 +82,7 @@ public interface Service {
     Call<List<HotelsData>> getPopularHotels(@Header("Authorization") String token);
 
     @GET("hotels")
-    Call<Hotels> getHotels(@Header("Authorization") String token);
+    Call<Hotels> getHotels(@Header("Authorization") String token, @Query("limit") int limit, @Query("page") int page);
 
     //hotels details
     @GET("hotels/{id}")
@@ -167,12 +164,16 @@ public interface Service {
     Call<SearchHotel> search(@Header("Authorization") String token, @Query("data") String name);
 
 
-    @GET("searchHotelByNameDesc")
-    Call<ChurchesExample> ChurchesSearch(@Header("Authorization") String token, @Query("data") String name);
+    @GET("searchChurchByNameDesc")
+    Call<AllChurches> ChurchesSearch(@Header("Authorization") String token, @Query("data") String name);
 
 
+    @GET("searchMosqueByNameDesc")
+    Call<MosqueExample> mosqueSearch(@Header("Authorization") String token, @Query("data") String name);
+
+    @Multipart
     @POST("updateAuthAvatar")
-    Call<RegisterResponse> updateUserImage(
+    Call<RegisterResponse> updateUserAvatar(
             @Header("Accept") String accept
             , @Part MultipartBody.Part image
             , @Header("Authorization") String token);
@@ -180,27 +181,27 @@ public interface Service {
     //**************************************************************************
     //mosque
     @GET("mosques")
-    Call<List<MosqueExample>> getMosques(@Header("Authorization") String token);
+    Call<MosqueExample> getMosques(@Header("Authorization") String token);
 
     //Top mosque
     @GET("getTopMosques")
-    Call<List<MosqueExample>> getTopMosques(@Header("Authorization") String token);
+    Call<List<TopMosque>> getTopMosques(@Header("Authorization") String token);
 
     //mosque details
     @GET("mosques/{id}")
-    Call<MosqueExample> getMosqueDetails(@Path("id") int id, @Header("Authorization") String token);
+    Call<MosqueDetailsExample> getMosqueDetails(@Path("id") int id, @Header("Authorization") String token);
 
     //churches
     @GET("churches")
-    Call<List<ChurchesExample>> getChurches(@Header("Authorization") String token);
+    Call<AllChurches> getChurches(@Header("Authorization") String token);
 
     //Top churches
     @GET("getTopChurches")
-    Call<List<ChurchesExample>> getTopChurches(@Header("Authorization") String token);
+    Call<List<TopChurches>> getTopChurches(@Header("Authorization") String token);
 
     //churches details
     @GET("churches/{id}")
-    Call<ChurchesExample> getChurchesDetails(@Path("id") int id, @Header("Authorization") String token);
+    Call<MosqueDetailsExample> getChurchesDetails(@Path("id") int id, @Header("Authorization") String token);
 
     //******************************************************************************
     //get user details from

@@ -30,12 +30,14 @@ import com.example.pablo.model.mosques.MosqueExample;
 import com.google.gson.Gson;
 import com.victor.loading.newton.NewtonCradleLoading;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
-import static com.example.pablo.activity.Login.PREF_NAME;
+import static com.example.pablo.activity.Signup.PREF_NAME;
 import static com.example.pablo.activity.Login.parseError;
 
 public class MosqueDetails extends AppCompatActivity {
@@ -83,9 +85,9 @@ public class MosqueDetails extends AppCompatActivity {
         String token = Login.SP.getString(Login.TokenKey, "");//"No name defined" is the default value.
 
 
-        service.getMosqueDetails(mosqueId,token).enqueue(new Callback<MosqueExample>() {
+        service.getMosqueDetails(mosqueId,token).enqueue(new Callback<MosqueDetailsExample>() {
             @Override
-            public void onResponse(Call<MosqueExample> call, Response<MosqueExample> response) {
+            public void onResponse(Call<MosqueDetailsExample> call, Response<MosqueDetailsExample> response) {
                 Log.e("response code", response.code() + "");
 
                 if (response.isSuccessful()){
@@ -123,7 +125,7 @@ public class MosqueDetails extends AppCompatActivity {
                 }
             }
             @Override
-            public void onFailure(Call<MosqueExample> call, Throwable t) {
+            public void onFailure(Call<MosqueDetailsExample> call, Throwable t) {
                 t.printStackTrace();
               Toast.makeText(getApplicationContext(), t.getMessage()+"", Toast.LENGTH_LONG).show();
 

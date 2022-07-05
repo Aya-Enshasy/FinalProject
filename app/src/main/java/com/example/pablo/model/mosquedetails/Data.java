@@ -7,7 +7,6 @@ import com.google.gson.annotations.SerializedName;
 
 public class Data implements Serializable
 {
-
     @SerializedName("id")
     @Expose
     private Integer id;
@@ -38,13 +37,9 @@ public class Data implements Serializable
     @SerializedName("map")
     @Expose
     private String map;
-    @SerializedName("created_at")
+    @SerializedName("mosque_image")
     @Expose
-    private String createdAt;
-    @SerializedName("updated_at")
-    @Expose
-    private String updatedAt;
-    private final static long serialVersionUID = 6062483771230912118L;
+    private String mosqueImage;
 
     public Integer getId() {
         return id;
@@ -126,20 +121,12 @@ public class Data implements Serializable
         this.map = map;
     }
 
-    public String getCreatedAt() {
-        return createdAt;
+    public String getMosqueImage() {
+        return mosqueImage;
     }
 
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(String updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setMosqueImage(String mosqueImage) {
+        this.mosqueImage = mosqueImage;
     }
 
 }

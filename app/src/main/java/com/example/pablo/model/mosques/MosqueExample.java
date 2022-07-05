@@ -2,19 +2,19 @@
 package com.example.pablo.model.mosques;
 
 import java.io.Serializable;
+import java.util.List;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class MosqueExample implements Serializable
 {
-
     @SerializedName("message")
     @Expose
     private String message;
     @SerializedName("data")
     @Expose
-    private Data data;
-    private final static long serialVersionUID = -4383257488159063161L;
+    private List<Datum> data = null;
 
     public String getMessage() {
         return message;
@@ -24,11 +24,11 @@ public class MosqueExample implements Serializable
         this.message = message;
     }
 
-    public Data getData() {
+    public List<Datum> getData() {
         return data;
     }
 
-    public void setData(Data data) {
+    public void setData(List<Datum> data) {
         this.data = data;
     }
 

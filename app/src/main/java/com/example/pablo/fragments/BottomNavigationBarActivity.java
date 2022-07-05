@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 
 import com.example.pablo.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -21,16 +22,15 @@ public class BottomNavigationBarActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bottom_navigation_bar);
 
-        EventBus.getDefault().register(this);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 if (item.getItemId() == R.id.Home) {
-                    openFragment(HomeFragment.newInstance());
-                    //  finish();
-                } else if (item.getItemId() == R.id.Favorites) {
+                    openFragment(HotelsFragment.newInstance());
+                      finish();
+                } else if (item.getItemId() == R.id.Cart) {
                     openFragment(CartFragment.newInstance());
                 } else if (item.getItemId() == R.id.Order) {
                     openFragment(OrderFragment.newInstance());
@@ -49,10 +49,29 @@ public class BottomNavigationBarActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.viewpager1, fragment);
         fragmentTransaction.commit();
     }
+
     @Subscribe
-     public void onEvent(String event) {
+    public void onEvent(String event) {
         if (event.equals("cart")) {
             openFragment(CartFragment.newInstance());
-        }
+       }else if(event.equals("order")){
+           openFragment(OrderFragment.newInstance());
+       }
+    }
+
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getDefault().unregister(this);
+
+        super.onPause();
     }
 }
