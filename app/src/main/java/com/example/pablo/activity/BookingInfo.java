@@ -205,7 +205,7 @@ public class BookingInfo extends AppCompatActivity {
                         Toast.makeText(BookingInfo.this, "add day count", Toast.LENGTH_SHORT).show();
                     }
 
-    Glide.with(BookingInfo.this).load(response.body().getData().getRoomImages().get(0)).circleCrop().into(binding.imageView6);
+    Glide.with(BookingInfo.this).load(response.body().getData().getRoomImages().get(0)).into(binding.imageView6);
 
                     Log.e("room_image",response.body().getData().getRoomImages()+"");
 
@@ -261,6 +261,8 @@ public class BookingInfo extends AppCompatActivity {
 
                             if (sum <= response.body().getData().getAvailableRooms()) {
                                 binding.add.setEnabled(true);
+                                binding.min.setEnabled(true);
+
                                 Long dayCount = Long.valueOf((binding.dayCount.getText().toString()));
                                 binding.count.setText(sum + "");
 
@@ -513,6 +515,8 @@ public class BookingInfo extends AppCompatActivity {
 
                             if (sum <= response.body().getData().getAvailableRooms()) {
                                 binding.add.setEnabled(true);
+                                binding.min.setEnabled(true);
+
                                 Long dayCount = Long.valueOf((binding.dayCount.getText().toString()));
                                 binding.count.setText(sum + "");
 
@@ -858,9 +862,10 @@ public class BookingInfo extends AppCompatActivity {
         binding.cart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                startActivity(new Intent(getBaseContext(),BottomNavigationBarActivity.class));
-                EventBus.getDefault().post("cart");
+                Intent intent=new Intent(getBaseContext(),BottomNavigationBarActivity.class);
+                intent.putExtra("order","order");
+                startActivity(intent);
+//                EventBus.getDefault().post("cart");
             }
         });
     }
